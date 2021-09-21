@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="summary-card ma-3 pt-6"
+    class="summary-card ma-4 pt-6"
     :class="bgColor"
     max-width="300"
     outlined
