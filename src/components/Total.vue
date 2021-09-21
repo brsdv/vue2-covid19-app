@@ -16,12 +16,22 @@
     </section>
     <section>
       <h2 class="display-1">Visuals</h2>
+      <div class="small">
+        <line-chart
+          v-for="(item, index) in visuals"
+          :key="index"
+          :chart-data="item.chartData"
+          :options="item.options"
+        ></line-chart>
+      </div>
     </section>
   </main>
 </template>
 
 <script>
-import CardStats from './CardStats.vue'
+import CardStats from './CardStats'
+// eslint-disable-next-line no-unused-vars
+import LineChart from './LineChart'
 
 export default {
   name: 'total',
@@ -52,6 +62,24 @@ export default {
           amountNew: 200,
           icon: 'mdi-hospital-box'
         }
+      ],
+      visuals: [
+        {
+          chartData: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            datasets: [
+              {
+                label: 'Data',
+                backgroundColor: '#f87979',
+                data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false
+          }
+        }
       ]
     }
   }
@@ -62,15 +90,25 @@ export default {
 h1, h2 {
   font-weight: normal;
 }
+
 ul {
   list-style-type: none;
   padding: 0;
 }
+
 li {
   display: inline-block;
   margin: 0 10px;
 }
+
 a {
   color: #42b983;
+}
+
+.small {
+  width: 100%;
+  height: 100%;
+  max-height: 400px;
+  margin: auto;
 }
 </style>
