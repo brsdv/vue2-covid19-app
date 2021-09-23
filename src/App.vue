@@ -8,7 +8,7 @@
     >
       <v-list>
         <v-list-item
-          v-for="item in items"
+          v-for="item in nav"
           :key="item.title"
           link
           :to="item.link"
@@ -38,6 +38,19 @@
 
       <v-spacer></v-spacer>
 
+      <v-toolbar-title class="text-subtitle-1 font-weight-bold">
+        <v-tooltip
+          bottom
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <span
+              v-bind="attrs"
+              v-on="on"
+            >Top 5</span>
+          </template>
+          <span>Active cases</span>
+        </v-tooltip>
+      </v-toolbar-title>
       <v-menu
         left
         bottom
@@ -48,17 +61,19 @@
             v-bind="attrs"
             v-on="on"
           >
-            <v-icon>mdi-dots-vertical</v-icon>
+            <v-icon>mdi-arrow-down-drop-circle-outline</v-icon>
           </v-btn>
         </template>
 
         <v-list>
           <v-list-item
-            v-for="n in 5"
-            :key="n"
+            v-for="country in countries"
+            :key="country"
             @click="() => {}"
+            link
+            :to="'/country/' + country"
           >
-            <v-list-item-title>Country {{ n }}</v-list-item-title>
+            <v-list-item-title @click="updateCountry(country)">{{ country }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -66,7 +81,7 @@
 
     <v-main>
       <v-container fluid>
-        <router-view></router-view>
+        <router-view />
       </v-container>
     </v-main>
   </v-app>
@@ -77,12 +92,32 @@ export default {
   name: 'App',
   data () {
     return {
-      items: [
-        { title: 'World summary', icon: 'mdi-earth', link: '/' },
-        { title: 'Countries', icon: 'mdi-flag', link: '/countries' },
-        { title: 'News', icon: 'mdi-newspaper', link: '/' }
+      nav: [
+        {
+          title: 'World summary',
+          icon: 'mdi-earth',
+          link: '/'
+        },
+        {
+          title: 'Countries',
+          icon: 'mdi-flag',
+          link: '/countries'
+        }
       ],
       drawer: false
+    }
+  },
+  mounted () {
+    this.$store.dispatch('updateTopCountries')
+  },
+  methods: {
+    updateCountry (country) {
+      this.$store.dispatch('newCountryName', country)
+    }
+  },
+  computed: {
+    countries () {
+      return this.$store.getters.topCountries
     }
   }
 }

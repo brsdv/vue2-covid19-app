@@ -10,15 +10,17 @@
           :bgColor="card.bgColor"
           :cardIcon="card.icon"
           :cardAmount="card.amount"
-          :cardAmountNew="card.amountNew"
+          :cardAmountToday="card.amountToday"
+          :cardPerOneMillion="card.perOneMillion"
+          :population="population"
         />
       </v-row>
     </section>
     <section>
       <h2 class="display-1">Visuals</h2>
-      <v-row class="mt-1" align="center" justify="center">
+      <v-row class="mt-1" align="center">
         <line-chart
-          class="ma-4"
+          class="small ma-4"
           v-for="(item, index) in visuals"
           :key="index"
           :chart-data="item.chartData"
@@ -43,37 +45,44 @@ export default {
     return {
       cards: [
         {
+          code: 'cases',
           title: 'Total cases',
           bgColor: 'primary lighten-2',
           amount: 0,
-          amountNew: 0,
+          amountToday: 0,
+          perOneMillion: 0,
           icon: 'mdi-alert-box'
         },
         {
+          code: 'deaths',
           title: 'Deaths',
           bgColor: 'red accent-2',
           amount: 0,
-          amountNew: 0,
+          amountToday: 0,
+          perOneMillion: 0,
           icon: 'mdi-emoticon-dead'
         },
         {
+          code: 'recoveries',
           title: 'Recoveries',
           bgColor: 'teal lighten-1',
           amount: 0,
-          amountNew: 0,
+          amountToday: 0,
+          perOneMillion: 0,
           icon: 'mdi-hospital-box'
         }
       ],
+      population: 0,
       visuals: [],
-      continents: null,
+      worldStatAll: null,
       allData: null
     }
   },
   mounted () {
     this.axios
-      .get('https://corona.lmao.ninja/v2/continents?sort')
+      .get('https://corona.lmao.ninja/v2/all')
       .then(response => {
-        this.continents = response
+        this.worldStatAll = response
         this.updateStats()
       })
       .catch(error => {
@@ -92,33 +101,34 @@ export default {
   },
   methods: {
     updateStats () {
-      let data = this.continents.data
-      let cases = 0
-      let todayCases = 0
-      let deaths = 0
-      let todayDeaths = 0
-      let recoveries = 0
+      let data = this.worldStatAll.data
 
-      data.forEach(item => {
-        cases += item.cases
-        todayCases += item.todayCases
-        deaths += item.deaths
-        todayDeaths += item.todayDeaths
-        recoveries += item.recovered
+      this.population = data.population
+      this.cards.forEach(item => {
+        if (item.code === 'cases') {
+          item.amount = data.cases
+          item.amountToday = data.todayCases
+          item.perOneMillion = data.casesPerOneMillion
+        }
+
+        if (item.code === 'deaths') {
+          item.amount = data.deaths
+          item.amountToday = data.todayDeaths
+          item.perOneMillion = data.deathsPerOneMillion
+        }
+
+        if (item.code === 'recoveries') {
+          item.amount = data.recovered
+          item.amountToday = data.todayRecovered
+          item.perOneMillion = data.recoveredPerOneMillion
+        }
       })
-
-      this.cards[0].amount += cases
-      this.cards[0].amountNew += todayCases
-      this.cards[1].amount += deaths
-      this.cards[1].amountNew += todayDeaths
-      this.cards[2].amount += recoveries
     },
     updateVisuals () {
       let data = this.allData.data
       let cases = data.cases
       let deaths = data.deaths
       let recoveries = data.recovered
-      console.log(recoveries)
 
       let labels = []
       let casesPerDay = []
@@ -170,10 +180,6 @@ export default {
         },
         options: { responsive: true, maintainAspectRatio: false }
       })
-
-      // данные о выздоровевших за последние 24 часа (так как в апи нет свойства по подобию todayCases или todayDeaths)
-      let lastDayRecoveries = recoveriesPerDay[recoveriesPerDay.length - 1] - recoveriesPerDay[recoveriesPerDay.length - 2]
-      this.cards[2].amountNew += lastDayRecoveries
     }
   }
 }
