@@ -1,6 +1,6 @@
 # vue2-covid19-app
 
-> Vue dashboard for COVID-19 stats
+> Vue + Vuetify dashboard for COVID-19 stats
 
 ## Build Setup
 
@@ -19,4 +19,5 @@ npm run build --report
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
-# vue2-covid19-app
+
+[NovelCOVID API](https://documenter.getpostman.com/view/11144369/Szf6Z9B3?version=latest) for Current cases and more stuff about COVID-19.
